@@ -1,4 +1,7 @@
 <?php
+
+namespace Classes;
+
 require 'vendor/autoload.php';
 
 use GuzzleHttp\Client;
@@ -12,14 +15,13 @@ class BuscaCnpj
         $client = new Client(['base_uri' => 'https://www.receitaws.com.br/v1/cnpj/']);
         // Send a request to base URI
         try {
-            $response = $client->request('GET', $cnpj);
+            $request = $client->request('GET', $cnpj);
         } 
         catch (RequestException $e) {
             return false;
         }
-        // Get body 
-        $body = $response->getBody();
+        $response = $request->getBody()->getContents();
         
-        return $body->getContents(); 
+        return $response; 
     }
 }

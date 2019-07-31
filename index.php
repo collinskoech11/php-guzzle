@@ -1,10 +1,4 @@
-<? 
-session_start();
-
-if (isset($_SESSION['response'])) {
-    $dados = json_decode($_SESSION['response']);
-}
-?>
+<? session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,31 +8,23 @@ if (isset($_SESSION['response'])) {
     <title>PHP Guzzle</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<style>
-body {
-    background: url("fundo.jpg");
-    background-size: 100% 100%;
-    background-color: #fff;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-}
-.lista {
-    margin-top: 5px;
-}
-</style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
-        <a class="navbar-brand text-white">Busca de CNPJ com PHP</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0" action="recebe_dados.php" method="post">
-                <input name="cnpj" type="text" class="form-control mr-sm-4" placeholder="Insira um CNPJ" autofocus>
-                <button class="btn btn-outline-light my-2 my-sm-0">Pesquisar</button>
-            </form>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #6181b6;">
+        <div class="container">
+            <a class="navbar-brand text-white">
+                <img src="image/logo.jpg" width="120px" height="60px" alt=""> Busca de CNPJ
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+                <form class="form-inline my-2 my-lg-0" action="controller/RecebeDados.php" method="post">
+                    <input name="cnpj" type="text" class="form-control mr-sm-4" placeholder="Digite um CNPJ" autofocus>
+                    <button class="btn btn-outline-light my-2 my-sm-0">Pesquisar</button>
+                </form>
+            </div>
         </div>
     </nav>
     <div class="fundo">
@@ -52,32 +38,33 @@ body {
             <? unset($_SESSION['erro']); ?>
         <? endif; ?>
         <div class="container-fluid">
-            <? if(isset($dados)): ?>
+            <? if(isset($_SESSION['response'])): ?>
+            
             <dl class="lista">
                 <div class="row">
                     <dt class="col-sm-2">Empresa:</dt>
-                    <dd class="col-sm-8"><? echo ($dados->nome); ?></dd>
+                    <dd class="col-sm-8"><? echo ($_SESSION['response']->nome); ?></dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Telefone:</dt>
-                    <dd class="col-sm-2"><? echo ($dados->telefone); ?></dd>
+                    <dd class="col-sm-2"><? echo ($_SESSION['response']->telefone); ?></dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">E-mail:</dt>
-                    <dd class="col-sm-8"><? echo ($dados->email); ?></dd>
+                    <dd class="col-sm-8"><? echo ($_SESSION['response']->email); ?></dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Endereço:</dt>
-                    <dd class="col-sm-8"><? echo ("$dados->logradouro $dados->numero $dados->bairro $dados->municipio"); ?></dd>
+                    <dd class="col-sm-8"><? echo ($_SESSION['response']->logradouro . $_SESSION['response']->numero . $_SESSION['response']->bairro . $_SESSION['response']->municipio); ?></dd>
                 </div>
-                <? foreach($dados->atividade_principal as $atividade): ?>
+                <? foreach($_SESSION['response']->atividade_principal as $atividade): ?>
                 <div class="row">
                     <dt class="col-sm-2">Atividade Principal:</dt>
                     <dd class="col-sm-8"><? echo $atividade->text; ?></dd>
                 </div>
                 <? endforeach; ?>
                 <dt>Sóicios-Administradores:</dt>
-                <? foreach($dados->qsa as $socio): ?>
+                <? foreach($_SESSION['response']->qsa as $socio): ?>
                 <ul>
                     <li>Cargo: <? echo $socio->qual; ?></li>
                     <li>Nome: <? echo $socio->nome; ?></li>
@@ -85,7 +72,7 @@ body {
                 <? endforeach; ?>
             </dl>
             <footer>
-                <form action="recebe_dados.php" method="post">
+                <form action="controller/RecebeDados.php" method="post">
                     <input type="submit" name="reset" class="btn btn-secondary" value="Limpar">
                 </form>
             </footer>
